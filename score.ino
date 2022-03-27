@@ -1,0 +1,4 @@
+//class Score {
+//  private:
+//  public:
+//};
