@@ -1,4 +1,0 @@
-//class TrashIt {
-//  private:
-//  public:
-//};
