@@ -1,5 +1,0 @@
-//class CompostIt {
-//  private:
-//  public:
-//  
-//};
