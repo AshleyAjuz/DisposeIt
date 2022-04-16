@@ -1,4 +1,0 @@
-//class RecycleIt {
-//  private:
-//  public:
-//};
