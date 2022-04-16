@@ -1,4 +1,0 @@
-//class ScreenDisplay {
-//  private:
-//  public:
-//};
