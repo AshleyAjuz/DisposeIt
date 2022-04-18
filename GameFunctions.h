@@ -1,20 +1,23 @@
+//libraries
 #include <LiquidCrystal_I2C.h>
 
+//classes
 #include "Audio.h"
 
+//pin assignments
 #define correctLED 3
 #define incorrectLED 7
 
+//class objects
 Audio audio;
 
 class GameFunctions {
   private:
     int score;
   public:
-  void correctAction(LiquidCrystal_I2C lcd, int action, boolean gameActive);
-  void startGame(boolean gameActive);
-  void endGame(LiquidCrystal_I2C lcd, char* correctAnswer, boolean gameActive);
-  void restartGame(LiquidCrystal_I2C lcd, boolean gameActive);
+  void correctAction(LiquidCrystal_I2C lcd, int action);
+  boolean endGame(LiquidCrystal_I2C lcd, char* correctAnswer, boolean timeUp, boolean maxScore);
+  void restartGame(LiquidCrystal_I2C lcd);
   void incrementScore();
   void checkScore();
   int getScore();
@@ -23,15 +26,15 @@ class GameFunctions {
  void GameFunctions::incrementScore(){
   score++;
 
-  if(score%10 == 0)
-    audio.everyTenPoints();
+  //if(score%10 == 0)
+   // audio.everyTenPoints();
 }
 
 int GameFunctions::getScore(){
   return score;
 }
 
-void GameFunctions::correctAction(LiquidCrystal_I2C lcd, int action, boolean gameActive){
+void GameFunctions::correctAction(LiquidCrystal_I2C lcd, int action){
   lcd.clear();
   
   if(action==0){
@@ -63,66 +66,73 @@ void GameFunctions::correctAction(LiquidCrystal_I2C lcd, int action, boolean gam
   digitalWrite(correctLED, LOW);
 
   if(score == 99)
-    endGame(lcd, "Max score", gameActive);
+    endGame(lcd, "", 0, 1);
 }
+boolean GameFunctions::endGame(LiquidCrystal_I2C lcd, char* correctAnswer, boolean timeUp, boolean maxScore){
+  //audio.gameLost();
 
-void GameFunctions::endGame(LiquidCrystal_I2C lcd, char* correctAnswer, boolean gameActive){
-  gameActive = LOW;
+  if(timeUp){
+    lcd.clear();
+    lcd.print("Time's up,");
+    lcd.setCursor(0,1);
+    lcd.print("Game Over!");
+  }else if(maxScore){
+    lcd.clear();
+    lcd.print("Score = 99,");
+    lcd.setCursor(0,1);
+    lcd.print("You win!");
+  }
+  else{
+    lcd.clear();
+    lcd.print("Incorrect,");
+    lcd.setCursor(0,1);
+    lcd.print("Game Over!");
+    digitalWrite(incorrectLED, HIGH);
+  }
+  delay(1500);
 
-  audio.gameLost();
-
-  lcd.clear();
-  lcd.print("Incorrect,");
-  lcd.setCursor(0,1);
-  lcd.print("Game Over!");
-  digitalWrite(incorrectLED, HIGH);
-  delay(1000);
-
-  lcd.clear();
-  lcd.print("Correct Answer: ");
-  lcd.setCursor(0,1);
-  lcd.print(correctAnswer);
-  delay(1000);
-  
-  lcd.clear();
-  lcd.print("Score:");
-  lcd.setCursor(0,1);
-  lcd.print(score);
-  delay(1000);
+  if(maxScore){
+    
+  }else{
+    lcd.clear();
+    lcd.print("Correct Answer: ");
+    lcd.setCursor(0,1);
+    lcd.print(correctAnswer);
+    delay(1500);
+    
+    lcd.clear();
+    lcd.print("Score:");
+    lcd.setCursor(0,1);
+    lcd.print(score);
+    delay(1500);
+   }
 
   lcd.clear();
   lcd.print("Press reset to");
   lcd.setCursor(0,1);
   lcd.print("start a game.");
-  delay(1000);
-  
-  digitalWrite(incorrectLED, LOW);
-}
 
-void GameFunctions::startGame(boolean gameActive){
   score=0;
-  gameActive = HIGH;
+  digitalWrite(incorrectLED, LOW);
+  return LOW;
 }
 
-void GameFunctions::restartGame(LiquidCrystal_I2C lcd, boolean gameActive){
-  //endGame();
-  gameActive = LOW;
-
+void GameFunctions::restartGame(LiquidCrystal_I2C lcd){
   lcd.clear();
   lcd.print("Game Reset!");
-  delay(1000);
+  delay(1500);
   
   lcd.clear();
   lcd.print("Score:");
   lcd.setCursor(0,1);
   lcd.print(score);
-  delay(1000);
+  delay(1500);
 
   lcd.clear();
   lcd.print("New game");
   lcd.setCursor(0,1);
   lcd.print("starting...");
-  delay(1000);
-  
-  startGame(gameActive);
+  delay(1500);
+
+  score=0;
 }
