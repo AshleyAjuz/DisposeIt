@@ -12,22 +12,23 @@ class TrashIt {
 };
 
 boolean TrashIt::action(){
- 
- int reading = digitalRead(button);
- if (reading != lastButtonState) 
-  lastDebounceTime = millis();
-  
+  int reading = digitalRead(button);
+
+  if (reading != lastButtonState) {
+    lastDebounceTime = millis();
+  }
 
   if ((millis() - lastDebounceTime) > debounceDelay) {
+
     if (reading != buttonState) {
       buttonState = reading;
 
-      if (buttonState == HIGH) 
-        return true;
-      else
-        return false;
+      if (buttonState == HIGH) {
+        return HIGH;
+      }
     }
   }
 
   lastButtonState = reading;
+  return LOW;
 }

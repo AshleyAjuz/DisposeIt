@@ -2,20 +2,18 @@
 #include <LiquidCrystal_I2C.h>
 #include <Wire.h>
 
-//class header files
+//classes
 #include "CompostIt.h"
 #include "RecycleIt.h"
 #include "TrashIt.h"
 #include "GameFunctions.h"
 #include "Commands.h"
 #include "Timer.h"
-//#include "Audio.h"
 
 //pin assignments
 #define reset 9
 
 //library instantiations
-//SoftwareSerial mySoftwareSerial(audioRx, audioTx);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 //variables
@@ -28,6 +26,7 @@ unsigned long lastResetDebounceTime = 0;
 unsigned long resetDebounceDelay = 50;
 boolean gameActive = LOW;
 boolean resetAction = LOW;
+boolean timeUp = LOW;
 
 //object instantiation
 GameFunctions game;
@@ -35,8 +34,7 @@ RecycleIt recycleit;
 TrashIt trashit;
 CompostIt compostit;
 Commands commands;
-//Timer timer;
-//Audio audio;
+Timer timer;
 
 void setup() {
   //pin mode setup
@@ -70,20 +68,24 @@ void setup() {
 void gameplay(){
     //generate command
     commands.generateCommand(lcd);
+
+    //renew timer for this command
+    timer.resetTimer();
+    timeUp = LOW;
   
     //polling for actions
     recycleItAction = recycleit.action();
     trashItAction = trashit.action();
     compostItAction = compostit.action();
+    resetAction = checkReset();
     
-    while(recycleItAction == LOW and trashItAction == LOW and compostItAction == LOW and resetAction == LOW){
+    //waiting for action (user input, reset, or timer expiration)
+    while(recycleItAction == LOW and trashItAction == LOW and compostItAction == LOW and resetAction == LOW and timeUp == LOW){
       recycleItAction = recycleit.action();
       trashItAction = trashit.action();
       compostItAction = compostit.action();
-      resetAction = checkReset(); }
-      
-    if(resetAction) //just checking reset since we were hanging in a while loop
-      game.restartGame(lcd, gameActive);
+      resetAction = checkReset();
+      timeUp = timer.timeLimitCheck();}
       
     //action taken on command, checking command
     boolean actionCorrect = false;
@@ -92,72 +94,83 @@ void gameplay(){
     if (recycleItAction and !trashItAction and !compostItAction) {
       actionCorrect = commands.checkCommand(1);
   
-      if(actionCorrect)
-        game.correctAction(lcd, 1, gameActive);
-      else{
-        char* correctAnswer = commands.getCorrectString();
-        game.endGame(lcd, correctAnswer, gameActive);
+      if(actionCorrect){
+        game.correctAction(lcd, 1);
+        timer.speedUpGame(game.getScore());
+      }else{
+        gameActive = game.endGame(lcd, commands.getCorrectString(),0,0);
+        timer.resetInterval();
       }
     } //selected trash
     else if (!recycleItAction and trashItAction and !compostItAction){
       actionCorrect = commands.checkCommand(0);
   
      if(actionCorrect){
-        game.correctAction(lcd, 0, gameActive);
+        game.correctAction(lcd, 0);
+        timer.speedUpGame(game.getScore());
       }else{
-        char* correctAnswer = commands.getCorrectString();
-        game.endGame(lcd, correctAnswer, gameActive);
+        gameActive = game.endGame(lcd, commands.getCorrectString(),0,0);
+        timer.resetInterval();
       }
     } //selected compost
     else if (!recycleItAction and !trashItAction and compostItAction){
       actionCorrect = commands.checkCommand(2);
   
      if(actionCorrect){
-        game.correctAction(lcd, 2, gameActive);
+        game.correctAction(lcd, 2);
+        timer.speedUpGame(game.getScore());
       }else{
-        char* correctAnswer = commands.getCorrectString();
-        game.endGame(lcd, correctAnswer, gameActive);
+        gameActive = game.endGame(lcd, commands.getCorrectString(),0,0);
+        timer.resetInterval();
       }
-    }//no action
-    else
+    }//did not answer fast enough
+    else if(timeUp){
+      gameActive = game.endGame(lcd, commands.getCorrectString(),1,0);
+      timer.resetInterval();
+    }//reset
+    else if(resetAction){
+      game.restartGame(lcd);
+      timer.resetInterval();
+    }else
       lcd.clear();  
 }
 
 boolean checkReset(){
   int reading = digitalRead(reset);
-  if (reading != lastResetButtonState) 
-  lastResetDebounceTime = millis();
+
+  if (reading != lastResetButtonState) {
+    lastResetDebounceTime = millis();
+  }
 
   if ((millis() - lastResetDebounceTime) > resetDebounceDelay) {
     if (reading != resetButtonState) {
       resetButtonState = reading;
 
-      if (resetButtonState == HIGH){
-        if(gameActive == LOW) {//no game, well start one
-          gameActive = HIGH;}
-
-        lcd.clear();
-        lcd.print("Reset");
-       
-        return true;
+      if (resetButtonState == HIGH) {
+        return HIGH;
       }
-      else{
-        lcd.clear();
-        return false;}
     }
   }
 
   lastResetButtonState = reading;
+  return LOW;
 }
 
+
 void loop() {
-  boolean initialGameActive = gameActive;
   resetAction = checkReset();
+    
+  if(!gameActive and resetAction){ //no game active, and reset hit .. start a game
+     gameActive=HIGH;
+     timer.resetInterval();
+   }
+  else if(gameActive and resetAction){ //reset hit in middle of game ... restart 
+    game.restartGame(lcd);
+    timer.resetInterval();
+  }
+  else if(gameActive){
+    gameplay(); //regular game play}
+  }
   
-   if(!initialGameActive and resetAction) //no game active, and reset hit .. start a game
-     game.startGame(gameActive);
-   else if(resetAction) //reset hit in middle of game ... restart 
-    game.restartGame(lcd, gameActive);
-  else if(initialGameActive){
-    gameplay(); }//regular game play}
+  else if(!gameActive){}
 }

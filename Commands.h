@@ -4,7 +4,6 @@ class Commands {
   private:
     int randomCommand = 0;
     int lastCommand = 0;
-    //int items = 9;
     char* itemStrings[9] = {"Cardboard", "Greasy Pizza Box", "Plastic Bag","Battery", "Paper", "Diaper", "Banana Peel", "Coffee Grounds", "Egg Shells"};
     
     //trash=0

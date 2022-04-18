@@ -1,5 +1,7 @@
+//libraries
 #include "pitches.h"
 
+//pin assignments
 #define speaker 1
 
 class Audio {
@@ -8,6 +10,7 @@ class Audio {
     void everyTenPoints();
     void gameLost();
     void gameWon();
+    void gameStart();
  };
 
 void Audio::everyTenPoints(){

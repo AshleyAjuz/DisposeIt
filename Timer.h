@@ -1,21 +1,39 @@
 class Timer {
   private:
-    int startingInterval = 5000;
-    int endInterval = 1000; 
-    int waitingInterval;
-    int decrementRatio;
+    unsigned long interval = 6500;
+    unsigned long firstTime, currentTime;
     
   public:
   Timer();
-  void waiting();
+  boolean timeLimitCheck();
+  void resetTimer();
+  void speedUpGame(int score);
+  void resetInterval();
 };
 
 Timer::Timer(){
-  waitingInterval = startingInterval;
-  decrementRatio = (startingInterval-endInterval)/100;
+  firstTime = millis();
+  currentTime = millis();
 }
 
-void Timer::waiting() {
-  delay(waitingInterval);
-  waitingInterval -= decrementRatio;
+boolean Timer::timeLimitCheck() {
+  currentTime = millis();
+
+  if(currentTime - firstTime >= interval)
+    return true;
+  else
+    return false;
+}
+
+void Timer::resetTimer(){
+  firstTime = millis();
+  currentTime = millis();
+}
+
+void Timer::speedUpGame(int score) {
+  interval = 6500-(score*50);
+}
+
+void Timer::resetInterval(){
+  interval = 6500;
 }
