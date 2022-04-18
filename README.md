@@ -7,7 +7,9 @@ A Bop-It rendition that will be used to teach users of the different methods of 
 # Contents of Repository
 
 **Software Folder**
+--
     --> **Classes**: Stores the created classes/libraries for this project (extension .h)
+--
     --> **main.ino**: File that contains a majority of the code and is what's used to run the game.
 
 **Hardware Folder**
