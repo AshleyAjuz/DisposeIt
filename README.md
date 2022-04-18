@@ -15,5 +15,5 @@ A Bop-It rendition that will be used to teach users of the different methods of 
     --> **disposeit.PcbDoc**: Contains the Altium PCB layout used for this project.<br />
     
 **Miscellaneous/Main** <br />
-    --> **PinAssingments**: Image detailing what pins of the ATMega (microchip used for the project) and what they are used for. 
+    --> **PinAssignments_DisposeIt.jpg**: Image detailing what pins of the ATMega (microchip used for the project) and what they are used for. 
 
