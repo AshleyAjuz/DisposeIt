@@ -6,16 +6,14 @@ A Bop-It rendition that will be used to teach users of the different methods of 
 
 # Contents of Repository
 
-**Software Folder**
---
-    --> **Classes**: Stores the created classes/libraries for this project (extension .h)
---
-    --> **main.ino**: File that contains a majority of the code and is what's used to run the game.
+**Software Folder** <br /> 
+    --> **Classes**: Stores the created classes/libraries for this project (extension .h) <br />
+    --> **main.ino**: File that contains a majority of the code and is what's used to run the game. <br />
 
-**Hardware Folder**
-    --> **disposeit.SchDoc**: Contains the Altium schematic used for the PCB.
-    --> **disposeit.PcbDoc**: Contains the Altium PCB layout used for this project.
+**Hardware Folder**  <br />
+    --> **disposeit.SchDoc**: Contains the Altium schematic used for the PCB.<br />
+    --> **disposeit.PcbDoc**: Contains the Altium PCB layout used for this project.<br />
     
-**Miscellaneous/Main**
+**Miscellaneous/Main** <br />
     --> **PinAssingments**: Image detailing what pins of the ATMega (microchip used for the project) and what they are used for. 
 
