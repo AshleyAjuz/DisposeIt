@@ -4,13 +4,38 @@ class Commands {
   private:
     int randomCommand = 0;
     int lastCommand = 0;
-    char* itemStrings[15] = {"Cardboard", "Greasy Pizza Box", "Plastic Bag","Battery", "Paper", "Diaper", "Banana Peel", "Coffee Grounds", "Egg Shells", "Chip bag",
-                              "Water bottle cap", "Chicken bone", "Plastic cup","Aluminum can","Glass jars"};
+    char* itemStrings[25] = {"Cardboard", "Greasy Pizza Box", "Plastic Bag","Battery", "Paper", "Diaper", "Banana Peel", "Coffee Grounds", "Egg Shells", "Chip bag",
+                              "Water bottle cap", "Chicken bone", "Plastic cup","Aluminum can","Glass jars", "Apple core","Vegetable oil", "Leaves","Newspaper","Water bottle","Empty ink cartridge",
+                              "CDs", "Packing peanuts", "Styrofoam", "Bubble wrap"};
     
     //trash=0
     //recycle=1
     //compost=2
-    int answers[15] = {1,0,0,0,1,0,2,2,2,0,0,0,0,1,1};
+    int answers[25] = { 1, //Cardboard
+                        0, //Greasy pizza box
+                        0, //Plastic bag
+                        1, //Battery
+                        1, //Paper
+                        0, //Diaper
+                        2, //Banana peel
+                        2, //Coffee grounds
+                        2, //Egg shells
+                        0, //Chip bag
+                        0, //water bottle cap
+                        0, //Chicken bone
+                        0, //Plastic cup
+                        1, //Aluminum can
+                        1, //Glass jars
+                        2, //Apple core
+                        2, //Vegetable oil
+                        2, //Leaves
+                        1, //Newspaper
+                        1, //Water bottle
+                        1, //Empty ink cartridge
+                        1, //CDs
+                        0, //packing peanuts
+                        0, //styrofoam
+                        0}; //bubble wrap
     
   public:
     void generateCommand(LiquidCrystal_I2C lcd);
@@ -19,11 +44,11 @@ class Commands {
 };
 
 void Commands::generateCommand(LiquidCrystal_I2C lcd){
-   randomCommand = random(15);
+   randomCommand = random(25);
 
    //current command different than last command
    while(randomCommand == lastCommand)
-    randomCommand = random(15);
+    randomCommand = random(25);
     
    lcd.clear();
    lcd.print(itemStrings[randomCommand]);
