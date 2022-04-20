@@ -28,6 +28,8 @@ class GameFunctions {
 
   if(score%10 == 0)
    audio.everyTenPoints();
+  else
+    audio.everyPoint();
 }
 
 int GameFunctions::getScore(){
@@ -70,11 +72,14 @@ boolean GameFunctions::endGame(LiquidCrystal_I2C lcd, char* correctAnswer, boole
     lcd.print("Time's up,");
     lcd.setCursor(0,1);
     lcd.print("Game Over!");
+    digitalWrite(incorrectLED, HIGH);
+    audio.trombone();
   }else if(maxScore){
     lcd.clear();
     lcd.print("Score = 99,");
     lcd.setCursor(0,1);
     lcd.print("You win!");
+    digitalWrite(correctLED, HIGH);
     audio.gameWon();
   }
   else{
@@ -85,7 +90,7 @@ boolean GameFunctions::endGame(LiquidCrystal_I2C lcd, char* correctAnswer, boole
     digitalWrite(incorrectLED, HIGH);
     audio.trombone();
   }
-  delay(1500);
+  delay(2500);
 
   if(maxScore){
     
@@ -94,13 +99,13 @@ boolean GameFunctions::endGame(LiquidCrystal_I2C lcd, char* correctAnswer, boole
     lcd.print("Correct Answer: ");
     lcd.setCursor(0,1);
     lcd.print(correctAnswer);
-    delay(1500);
+    delay(2500);
     
     lcd.clear();
     lcd.print("Score:");
     lcd.setCursor(0,1);
     lcd.print(score);
-    delay(1500);
+    delay(2500);
    }
 
   lcd.clear();
@@ -109,6 +114,7 @@ boolean GameFunctions::endGame(LiquidCrystal_I2C lcd, char* correctAnswer, boole
   lcd.print("start a game.");
 
   score=0;
+  digitalWrite(correctLED, LOW);
   digitalWrite(incorrectLED, LOW);
   return LOW;
 }

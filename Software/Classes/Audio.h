@@ -12,13 +12,20 @@ class Audio {
     void gameWon();
     void gameStart();
     void trombone();
+    void everyPoint();
  };
+
+void Audio::everyPoint(){
+  tone(speaker,NOTE_E6);
+  delay(250);
+  noTone(speaker);
+}
 
 void Audio::everyTenPoints(){
   tone(speaker,NOTE_B5,100);
-  delay(40);
+  delay(100);
   tone(speaker,NOTE_E6,850);
-  delay(320);
+  delay(400);
   noTone(speaker);
 }
 void Audio::gameLost(){
